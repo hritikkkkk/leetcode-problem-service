@@ -17,8 +17,20 @@ const createProblem = async (data) => {
 
     return problem;
   } catch (error) {
+    if (error.name === "ValidationError") {
+      const validationErrors = {};
+      Object.keys(error.errors).forEach((key) => {
+        validationErrors[key] = error.errors[key].message;
+      });
+      const Error = {
+        message: "Problem validation failed",
+        errors: validationErrors,
+      };
+      throw Error;
+    }
+
     throw new AppError(
-      "Cannot create a new tweet",
+      "Cannot create a new Problem",
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   }

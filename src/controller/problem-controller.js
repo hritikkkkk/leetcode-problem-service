@@ -8,6 +8,12 @@ const addProblem = async (req, res) => {
     SuccessResponse.data = problem;
     return res.status(StatusCodes.CREATED).json(SuccessResponse);
   } catch (error) {
+    if (error.message === "Problem validation failed") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: error.message,
+        errors: error.errors,
+      });
+    }
     ErrorResponse.error = error;
     return res.status(error.statusCode).json(ErrorResponse);
   }
