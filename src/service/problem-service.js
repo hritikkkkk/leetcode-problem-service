@@ -1,13 +1,14 @@
 const { StatusCodes } = require("http-status-codes");
 const { problemRepository } = require("../repo");
 const AppError = require("../utils/errors/app-error");
+const sanitizeMarkdownContent = require("../utils/helper/sanitizer");
 
 const ProblemRepo = new problemRepository();
 
 const createProblem = async (data) => {
   try {
     const { title, description, testCases, difficulty } = data;
-
+    sanitizeMarkdownContent(description);
     const problem = await ProblemRepo.create({
       title: title,
       description: description,
@@ -17,6 +18,7 @@ const createProblem = async (data) => {
 
     return problem;
   } catch (error) {
+    console.log(error);
     if (error.name === "ValidationError") {
       const validationErrors = {};
       Object.keys(error.errors).forEach((key) => {
