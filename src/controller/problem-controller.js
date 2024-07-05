@@ -1,0 +1,18 @@
+const { ProblemService } = require("../service");
+const { StatusCodes } = require("http-status-codes");
+const { SuccessResponse, ErrorResponse } = require("../utils/common");
+
+const addProblem = async (req, res) => {
+  try {
+    const problem = await ProblemService.createProblem(req.body);
+    SuccessResponse.data = problem;
+    return res.status(StatusCodes.CREATED).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+};
+
+module.exports = {
+  addProblem,
+};
