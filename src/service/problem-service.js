@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const { problemRepository } = require("../repo");
 const AppError = require("../utils/errors/app-error");
 const sanitizeMarkdownContent = require("../utils/helper/sanitizer");
+const { Logger } = require("../config");
 
 const ProblemRepo = new problemRepository();
 
@@ -80,6 +81,15 @@ const updateProblem = async (problemId, data) => {
 const deleteProblem = async (id) => {
   try {
     const problem = await ProblemRepo.destroy(id);
+    if (!problem) {
+      Logger.error(
+        `Problem.Service: Problem with id: ${id} not found in the db`
+      );
+      throw new AppError(
+        "problem you requested is not prsent",
+        StatusCodes.NOT_FOUND
+      );
+    }
     return problem;
   } catch (error) {
     if (error.statusCode == StatusCodes.NOT_FOUND) {
