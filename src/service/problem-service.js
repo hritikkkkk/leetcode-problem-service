@@ -77,7 +77,64 @@ const updateProblem = async (problemId, data) => {
   }
 };
 
+const deleteProblem = async (id) => {
+  try {
+    const problem = await ProblemRepo.destroy(id);
+    return problem;
+  } catch (error) {
+    if (error.statusCode == StatusCodes.NOT_FOUND) {
+      throw new AppError(
+        "The tweet you requested to delete is not present",
+        error.statusCode
+      );
+    }
+    throw new AppError(
+      "cannot fetch the data of given tweet",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+const getProblem = async (id) => {
+  try {
+    const problem = await ProblemRepo.getOne(id);
+
+    if (!problem)
+      throw new AppError(
+        "The problem you requested to is not present",
+        StatusCodes.NOT_FOUND
+      );
+    return problem;
+  } catch (error) {
+    console.log(error);
+    if (error.statusCode == StatusCodes.NOT_FOUND) {
+      throw new AppError(
+        "The problem you requested to is not present",
+        error.statusCode
+      );
+    }
+    throw new AppError(
+      "cannot fetch the data of given Problem",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+const getAllProblems = async (offset, limit) => {
+  try {
+    return await ProblemRepo.getAllProblems(offset, limit);
+  } catch (error) {
+    throw new AppError(
+      "cannot fetch the data of tweets",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
 module.exports = {
   createProblem,
   updateProblem,
+  deleteProblem,
+  getProblem,
+  getAllProblems,
 };

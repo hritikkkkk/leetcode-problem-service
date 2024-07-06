@@ -37,7 +37,47 @@ const updateProblem = async (req, res) => {
   }
 };
 
+const deleteProblem = async (req, res) => {
+  try {
+    const problem = await ProblemService.deleteProblem(req.params.id);
+    SuccessResponse.data = problem;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+};
+
+const getProblem = async (req, res) => {
+  try {
+    const problem = await ProblemService.getProblem(req.params.id);
+    SuccessResponse.data = problem;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    console.log(error)
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+};
+
+const getAllProblems = async (req, res) => {
+  try {
+    const problem = await ProblemService.getAllProblems({
+      offset: req.params.offset,
+      limit: req.params.limit,
+    });
+    SuccessResponse.data = problem;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+};
+
 module.exports = {
   addProblem,
   updateProblem,
+  deleteProblem,
+  getProblem,
+  getAllProblems,
 };
