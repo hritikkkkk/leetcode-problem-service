@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.post("/", ProblemController.addProblem);
 
+router.put("/:id", ProblemController.updateProblem);
+
 module.exports = router;

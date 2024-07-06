@@ -19,6 +19,25 @@ const addProblem = async (req, res) => {
   }
 };
 
+const updateProblem = async (req, res) => {
+  try {
+    const problemId = req.params.id;
+    const problem = await ProblemService.updateProblem(problemId, req.body);
+    SuccessResponse.data = problem;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    if (error.message === "Problem validation failed") {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: error.message,
+        errors: error.errors,
+      });
+    }
+    ErrorResponse.error = error;
+    return res.status(error.statusCode).json(ErrorResponse);
+  }
+};
+
 module.exports = {
   addProblem,
+  updateProblem,
 };

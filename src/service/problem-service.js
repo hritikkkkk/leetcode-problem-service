@@ -38,6 +38,46 @@ const createProblem = async (data) => {
   }
 };
 
+const updateProblem = async (problemId, data) => {
+  try {
+    const prob = await ProblemRepo.getOne(problemId);
+    if (!prob) throw new AppError("Problem not found", StatusCodes.NOT_FOUND);
+
+    const { title, description, testCases, difficulty } = data;
+    sanitizeMarkdownContent(description);
+    const problem = await ProblemRepo.update(problemId, {
+      title: title,
+      description: description,
+      difficulty: difficulty,
+      testCases: testCases ? testCases : [],
+    });
+
+    return problem;
+  } catch (error) {
+    console.log(error);
+    if (error.name === "CastError")
+      throw new AppError("Invalid problem ID format", StatusCodes.BAD_REQUEST);
+
+    if (error.name === "ValidationError") {
+      const validationErrors = {};
+      Object.keys(error.errors).forEach((key) => {
+        validationErrors[key] = error.errors[key].message;
+      });
+      const Error = {
+        message: "Problem validation failed",
+        errors: validationErrors,
+      };
+      throw Error;
+    }
+
+    throw new AppError(
+      "Cannot create a new Problem",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
 module.exports = {
   createProblem,
+  updateProblem,
 };
